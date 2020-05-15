@@ -33,6 +33,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #include "../client/keys.h"
+#include "../lua/luatest.h"
+#include "../lua-src/lauxlib.h"
+#include "../lua-src/lua.h"
+#include "../lua-src/lualib.h"
 
 const int demo_protocols[] = { 66, 67, PROTOCOL_VERSION, NEW_PROTOCOL_VERSION, 0 };
 
@@ -3724,6 +3728,11 @@ void Com_Init( char *commandLine ) {
 	// make sure single player is off by default
 	Cvar_Set( "ui_singlePlayerActive", "0" );
 #endif
+
+	Com_Printf( "--- Initializing Lua ---\n" );
+    lua_State *L = luaL_newstate();
+    luaL_openlibs(L);
+    Com_Printf( "L PTR VAL: %p\n", (void *) L);
 
 	com_fullyInitialized = qtrue;
 

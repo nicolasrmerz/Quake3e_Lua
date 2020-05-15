@@ -162,6 +162,9 @@ RVDIR=$(MOUNT_DIR)/renderervk
 RVSDIR=$(MOUNT_DIR)/renderervk/shaders/spirv
 SDLDIR=$(MOUNT_DIR)/sdl
 
+LDIR=$(MOUNT_DIR)/lua
+LSDIR=$(MOUNT_DIR)/lua-src
+
 CMDIR=$(MOUNT_DIR)/qcommon
 UDIR=$(MOUNT_DIR)/unix
 W32DIR=$(MOUNT_DIR)/win32
@@ -683,10 +686,52 @@ makedirs:
 	@if [ ! -d $(B)/rend1 ];then $(MKDIR) $(B)/rend1;fi
 	@if [ ! -d $(B)/rendv ];then $(MKDIR) $(B)/rendv;fi
 	@if [ ! -d $(B)/ded ];then $(MKDIR) $(B)/ded;fi
+	@if [ ! -d $(B)/lua ];then $(MKDIR) $(B)/lua;fi
+	@if [ ! -d $(B)/lua-src ];then $(MKDIR) $(B)/lua-src;fi
 
 #############################################################################
 # CLIENT/SERVER
 #############################################################################
+
+Q3LUAOBJ = \
+	$(B)/lua/luatest.o
+
+Q3LUASRCOBJ = \
+	$(B)/lua-src/lapi.o \
+	$(B)/lua-src/lauxlib.o \
+	$(B)/lua-src/lbaselib.o \
+	$(B)/lua-src/lbitlib.o \
+	$(B)/lua-src/lcode.o \
+	$(B)/lua-src/lcorolib.o \
+	$(B)/lua-src/lctype.o \
+	$(B)/lua-src/ldblib.o \
+	$(B)/lua-src/ldebug.o \
+	$(B)/lua-src/ldo.o \
+	$(B)/lua-src/ldump.o \
+	$(B)/lua-src/lfunc.o \
+	$(B)/lua-src/lgc.o \
+	$(B)/lua-src/linit.o \
+	$(B)/lua-src/liolib.o \
+	$(B)/lua-src/llex.o \
+	$(B)/lua-src/lmathlib.o \
+	$(B)/lua-src/lmem.o \
+	$(B)/lua-src/loadlib.o \
+	$(B)/lua-src/lobject.o \
+	$(B)/lua-src/lopcodes.o \
+	$(B)/lua-src/loslib.o \
+	$(B)/lua-src/lparser.o \
+	$(B)/lua-src/lstate.o \
+	$(B)/lua-src/lstring.o \
+	$(B)/lua-src/lstrlib.o \
+	$(B)/lua-src/ltable.o \
+	$(B)/lua-src/ltablib.o \
+	$(B)/lua-src/ltm.o \
+	$(B)/lua-src/lua.o \
+	$(B)/lua-src/luac.o \
+	$(B)/lua-src/lundump.o \
+	$(B)/lua-src/lutf8lib.o \
+	$(B)/lua-src/lvm.o \
+	$(B)/lua-src/lzio.o
 
 Q3REND1OBJ = \
   $(B)/rend1/tr_animation.o \
@@ -941,6 +986,9 @@ Q3OBJ = \
 
   Q3OBJ += $(JPGOBJ)
 
+	Q3OBJ += $(Q3LUAOBJ)
+	Q3OBJ += $(Q3LUASRCOBJ)
+
 ifeq ($(USE_RENDERER_DLOPEN),0)
 
   ifeq ($(USE_VULKAN),1)
@@ -1051,6 +1099,9 @@ $(B)/$(TARGET_RENDV): $(Q3RENDVOBJ)
 # DEDICATED SERVER
 #############################################################################
 
+Q3LUAOBJ = \
+	$(B)/lua/luatest.o
+
 Q3DOBJ = \
   $(B)/ded/sv_bot.o \
   $(B)/ded/sv_client.o \
@@ -1118,6 +1169,12 @@ Q3DOBJ = \
   $(B)/ded/l_script.o \
   $(B)/ded/l_struct.o
 
+Q3DOBJ += \
+	$(Q3LUAOBJ)
+
+Q3DOBJ += \
+	$(Q3LUASRCOBJ)
+
 ifdef MINGW
   Q3DOBJ += \
   $(B)/ded/win_main.o \
@@ -1169,6 +1226,12 @@ $(B)/client/%.o: $(JPDIR)/%.c
 $(B)/client/%.o: $(SDLDIR)/%.c
 	$(DO_CC)
 
+$(B)/lua/%.o: $(LDIR)/%.c
+	$(DO_CC)
+
+$(B)/lua-src/%.o: $(LSDIR)/%.c
+	$(DO_CC)
+	
 $(B)/rend1/%.o: $(R1DIR)/%.c
 	$(DO_REND_CC)
 
