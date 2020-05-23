@@ -300,6 +300,7 @@ static	cvar_t		*fs_basepath;
 static	cvar_t		*fs_basegame;
 static	cvar_t		*fs_copyfiles;
 static	cvar_t		*fs_gamedirvar;
+static	cvar_t		*fs_luadirvar;
 #ifndef USE_HANDLE_CACHE
 static	cvar_t		*fs_locked;
 #endif
@@ -4643,7 +4644,8 @@ static void FS_Startup( void ) {
 
 	Com_Printf( "----- FS_Startup -----\n" );
 
-	fs_debug = Cvar_Get( "fs_debug", "0", 0 );
+	//fs_debug = Cvar_Get( "fs_debug", "0", 0 );
+	fs_debug = Cvar_Get( "fs_debug", "1", 0 );
 	fs_copyfiles = Cvar_Get( "fs_copyfiles", "0", CVAR_INIT );
 	fs_basepath = Cvar_Get( "fs_basepath", Sys_DefaultBasePath(), CVAR_INIT | CVAR_PROTECTED | CVAR_PRIVATE );
 	fs_basegame = Cvar_Get( "fs_basegame", BASEGAME, CVAR_INIT | CVAR_PROTECTED );
@@ -4664,12 +4666,22 @@ static void FS_Startup( void ) {
 		homePath = fs_basepath->string;
 	}
 
+	// For now, allow loading both pk3 mods and lua mods
+	// fs_lua is treated identically to fs_game - the user just needs to run +set fs_lua {modname}
 	fs_homepath = Cvar_Get( "fs_homepath", homePath, CVAR_INIT | CVAR_PROTECTED | CVAR_PRIVATE );
 	fs_gamedirvar = Cvar_Get( "fs_game", "", CVAR_INIT | CVAR_SYSTEMINFO );
+	fs_luadirvar = Cvar_Get( "fs_lua", "", CVAR_INIT | CVAR_SYSTEMINFO );
+	
 	Cvar_CheckRange( fs_gamedirvar, NULL, NULL, CV_FSPATH );
+	Cvar_CheckRange( fs_lua, NULL, NULL, CV_FSPATH );
+
 
 	if ( !Q_stricmp( fs_basegame->string, fs_gamedirvar->string ) ) {
 		Cvar_ForceReset( "fs_game" );
+	}
+	
+	if ( !Q_stricmp( fs_basegame->string, fs_luadirvar->string ) ) {
+		Cvar_ForceReset( "fs_lua" );
 	}
 
 	fs_excludeReference = Cvar_Get( "fs_excludeReference", "", CVAR_ARCHIVE_ND | CVAR_LATCH );
@@ -4709,6 +4721,19 @@ static void FS_Startup( void ) {
 			FS_AddGameDirectory( fs_homepath->string, fs_gamedirvar->string );
 		}
 	}
+	
+	// check for additional game folder for mods
+	if ( fs_luadirvar->string[0] && Q_stricmp( fs_luadirvar->string, fs_basegame->string ) ) {
+		if ( fs_steampath->string[0] ) {
+			FS_AddGameDirectory( fs_steampath->string, fs_luadirvar->string );
+		}
+		if ( fs_basepath->string[0] ) {
+			FS_AddGameDirectory( fs_basepath->string, fs_luadirvar->string );
+		}
+		if ( fs_homepath->string[0] && Q_stricmp( fs_homepath->string, fs_basepath->string ) ) {
+			FS_AddGameDirectory( fs_homepath->string, fs_luadirvar->string );
+		}
+	}
 
 	// reorder search paths to minimize further changes
 	FS_ReorderSearchPaths();
@@ -4746,6 +4771,7 @@ static void FS_Startup( void ) {
 	Com_Printf( "%d files in %d pk3 files\n", fs_packFiles, fs_packCount );
 
 	fs_gamedirvar->modified = qfalse; // We just loaded, it's not modified
+	fs_luadirvar->modified = qfalse;
 
 	// check original q3a files
 	if ( !Q_stricmp( fs_basegame->string, BASEGAME ) || !Q_stricmp( fs_basegame->string, BASEDEMO ) )

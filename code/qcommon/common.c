@@ -3729,10 +3729,8 @@ void Com_Init( char *commandLine ) {
 	Cvar_Set( "ui_singlePlayerActive", "0" );
 #endif
 
-	Com_Printf( "--- Initializing Lua ---\n" );
-    lua_State *L = luaL_newstate();
-    luaL_openlibs(L);
-    Com_Printf( "L PTR VAL: %p\n", (void *) L);
+	L_Init();
+	
 
 	com_fullyInitialized = qtrue;
 
