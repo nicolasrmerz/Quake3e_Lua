@@ -4673,7 +4673,7 @@ static void FS_Startup( void ) {
 	fs_luadirvar = Cvar_Get( "fs_lua", "", CVAR_INIT | CVAR_SYSTEMINFO );
 	
 	Cvar_CheckRange( fs_gamedirvar, NULL, NULL, CV_FSPATH );
-	Cvar_CheckRange( fs_lua, NULL, NULL, CV_FSPATH );
+	Cvar_CheckRange( fs_luadirvar, NULL, NULL, CV_FSPATH );
 
 
 	if ( !Q_stricmp( fs_basegame->string, fs_gamedirvar->string ) ) {

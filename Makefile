@@ -694,7 +694,9 @@ makedirs:
 #############################################################################
 
 Q3LUAOBJ = \
-	$(B)/lua/luatest.o
+	$(B)/lua/lua_init.o \
+	$(B)/lua/lua_cmd.o \
+	$(B)/lua/lua_libs.o
 
 Q3LUASRCOBJ = \
 	$(B)/lua-src/lapi.o \
@@ -726,8 +728,6 @@ Q3LUASRCOBJ = \
 	$(B)/lua-src/ltable.o \
 	$(B)/lua-src/ltablib.o \
 	$(B)/lua-src/ltm.o \
-	$(B)/lua-src/lua.o \
-	$(B)/lua-src/luac.o \
 	$(B)/lua-src/lundump.o \
 	$(B)/lua-src/lutf8lib.o \
 	$(B)/lua-src/lvm.o \
@@ -986,8 +986,8 @@ Q3OBJ = \
 
   Q3OBJ += $(JPGOBJ)
 
-	Q3OBJ += $(Q3LUAOBJ)
-	Q3OBJ += $(Q3LUASRCOBJ)
+  Q3OBJ += $(Q3LUAOBJ)
+  Q3OBJ += $(Q3LUASRCOBJ)
 
 ifeq ($(USE_RENDERER_DLOPEN),0)
 
@@ -1099,8 +1099,10 @@ $(B)/$(TARGET_RENDV): $(Q3RENDVOBJ)
 # DEDICATED SERVER
 #############################################################################
 
-Q3LUAOBJ = \
-	$(B)/lua/luatest.o
+Q3DLUAOBJ = \
+	$(B)/lua/lua_init.o \
+	$(B)/lua/lua_cmd.o \
+	$(B)/lua/lua_libs.o
 
 Q3DOBJ = \
   $(B)/ded/sv_bot.o \
@@ -1170,7 +1172,7 @@ Q3DOBJ = \
   $(B)/ded/l_struct.o
 
 Q3DOBJ += \
-	$(Q3LUAOBJ)
+	$(Q3DLUAOBJ)
 
 Q3DOBJ += \
 	$(Q3LUASRCOBJ)

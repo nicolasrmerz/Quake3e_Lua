@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #include "../client/keys.h"
-#include "../lua/luatest.h"
+#include "../lua/lua_common.h"
 #include "../lua-src/lauxlib.h"
 #include "../lua-src/lua.h"
 #include "../lua-src/lualib.h"
