@@ -696,6 +696,7 @@ makedirs:
 Q3LUAOBJ = \
 	$(B)/lua/lua_init.o \
 	$(B)/lua/lua_cmd.o \
+	$(B)/lua/lua_fs.o \
 	$(B)/lua/lua_libs.o
 
 Q3LUASRCOBJ = \
@@ -1102,6 +1103,7 @@ $(B)/$(TARGET_RENDV): $(Q3RENDVOBJ)
 Q3DLUAOBJ = \
 	$(B)/lua/lua_init.o \
 	$(B)/lua/lua_cmd.o \
+	$(B)/lua/lua_fs.o \
 	$(B)/lua/lua_libs.o
 
 Q3DOBJ = \
