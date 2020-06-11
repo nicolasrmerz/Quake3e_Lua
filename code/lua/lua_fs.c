@@ -46,6 +46,10 @@ int qlua_write_fs(lua_State *L) {
     return 0;
 }
 
+
+// USE lua_register INSTEAD!!!!!
+// E.g.
+// lua_register(L, "LuaFunctionName", c_funcion_Name)
 static const struct luaL_Reg fs_l [] = {
     {"read", qlua_read_fs},
     {"write", qlua_write_fs},

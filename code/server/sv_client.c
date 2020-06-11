@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // sv_client.c -- server code for dealing with clients
 
 #include "server.h"
+#include "../lua/lua_common.h"
+#include "../lua/lua_hook.h"
 
 static void SV_CloseDownload( client_t *cl );
 
@@ -690,6 +692,7 @@ void SV_DirectConnect( const netadr_t *from ) {
 		}
 	}
 
+
 gotnewcl:
 	// build a new connection
 	// accept the new client
@@ -771,6 +774,13 @@ gotnewcl:
 	if ( count == 1 || count == sv_maxclients->integer ) {
 		SV_Heartbeat_f();
 	}
+
+    // Pass the event to Lua
+    if(L != NULL) {
+        if(qlua_check_and_get_hook(L, "SVDirectConnect")) {
+            qlua_pcall(L,0,0,qtrue);
+        }
+    }
 }
 
 
@@ -861,6 +871,13 @@ void SV_DropClient( client_t *drop, const char *reason ) {
 	if ( i == sv_maxclients->integer ) {
 		SV_Heartbeat_f();
 	}
+
+    // Pass the event to Lua
+    if(L != NULL) {
+        if(qlua_check_and_get_hook(L, "SVDropClient")) {
+            qlua_pcall(L,0,0,qtrue);
+        }
+    }
 }
 
 

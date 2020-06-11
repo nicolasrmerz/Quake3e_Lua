@@ -261,6 +261,7 @@ static void vk_create_swapchain( VkPhysicalDevice physical_device, VkDevice devi
 	qboolean mailbox_supported = qfalse;
 	qboolean immediate_supported = qfalse;
 	qboolean fifo_relaxed_supported = qfalse;
+	int v;
 
 	//physical_device = vk.physical_device;
 	//device = vk.device;
@@ -304,8 +305,10 @@ static void vk_create_swapchain( VkPhysicalDevice physical_device, VkDevice devi
 
 	ri.Free( present_modes );
 
-	if ( ri.Cvar_VariableIntegerValue( "r_swapInterval" ) ) {
-		if ( fifo_relaxed_supported )
+	if ( ( v = ri.Cvar_VariableIntegerValue( "r_swapInterval" ) ) != 0 ) {
+		if ( v == 2 && mailbox_supported )
+			present_mode = VK_PRESENT_MODE_MAILBOX_KHR;
+		else if ( fifo_relaxed_supported )
 			present_mode = VK_PRESENT_MODE_FIFO_RELAXED_KHR;
 		else
 			present_mode = VK_PRESENT_MODE_FIFO_KHR;
@@ -881,6 +884,10 @@ static qboolean vk_blit_enabled( const VkFormat srcFormat, const VkFormat dstFor
 
 static VkFormat get_hdr_format( VkFormat base_format )
 {
+	if ( r_fbo->integer == 0 ) {
+		return base_format;
+	}
+
 	switch ( r_hdr->integer ) {
 		case -1: return VK_FORMAT_B4G4R4A4_UNORM_PACK16;
 		case 1: return VK_FORMAT_R16G16B16A16_UNORM;
@@ -5183,10 +5190,11 @@ void vk_end_render_pass( void )
 //	vk.renderPassIndex = RENDER_PASS_MAIN;
 }
 
-static qboolean vk_find_drawsurfs( void )
+static qboolean vk_find_screenmap_drawsurfs( void )
 {
 	const void *curCmd = &backEndData->commands.cmds;
 	const drawBufferCommand_t *db_cmd;
+	const drawSurfsCommand_t *ds_cmd;
 
 	for ( ;; ) {
 		curCmd = PADP( curCmd, sizeof(void *) );
@@ -5196,7 +5204,8 @@ static qboolean vk_find_drawsurfs( void )
 				curCmd = (const void *)(db_cmd + 1);
 				break;
 			case RC_DRAW_SURFS:
-				return qtrue;
+				ds_cmd = (const drawSurfsCommand_t *)curCmd;
+				return ds_cmd->refdef.needScreenMap;
 			default:
 				return qfalse;
 		}
@@ -5290,7 +5299,7 @@ void vk_begin_frame( void )
 
 	backEnd.screenMapDone = qfalse;
 
-	if ( tr.needScreenMap && vk_find_drawsurfs() ) {
+	if ( vk_find_screenmap_drawsurfs() ) {
 		vk_begin_screenmap_render_pass();
 	} else {
 		vk_begin_main_render_pass();

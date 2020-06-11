@@ -4644,8 +4644,8 @@ static void FS_Startup( void ) {
 
 	Com_Printf( "----- FS_Startup -----\n" );
 
-	//fs_debug = Cvar_Get( "fs_debug", "0", 0 );
-	fs_debug = Cvar_Get( "fs_debug", "1", 0 );
+	fs_debug = Cvar_Get( "fs_debug", "0", 0 );
+	//fs_debug = Cvar_Get( "fs_debug", "1", 0 );
 	fs_copyfiles = Cvar_Get( "fs_copyfiles", "0", CVAR_INIT );
 	fs_basepath = Cvar_Get( "fs_basepath", Sys_DefaultBasePath(), CVAR_INIT | CVAR_PROTECTED | CVAR_PRIVATE );
 	fs_basegame = Cvar_Get( "fs_basegame", BASEGAME, CVAR_INIT | CVAR_PROTECTED );

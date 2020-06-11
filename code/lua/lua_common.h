@@ -11,6 +11,4 @@ void L_Init(void);
 
 int qlua_loadfile(lua_State *, const char *);
 
-int qlua_error (lua_State *L, const char *fmt, ...);
-
 #define qlua_dofile(L, filename) (qlua_loadfile(L, filename) || lua_pcall(L, 0, LUA_MULTRET, 0))

@@ -2,6 +2,7 @@
 #include "lua_libs.h"
 #define LUA_EXT ".lua"
 
+// Call this from Client/Server Init - Make specific ones for each eventually
 void L_Init() {
     union {
         char *c;
@@ -31,7 +32,12 @@ void L_Init() {
 		luaL_openlibs(L);
         qlua_openlibs(L);
         
+        // Run the lua initialization script
+        // luaL_dofile for init.lua - find out how to allow this in C but restrict it in the lua scripts
+        if(luaL_dofile(L, "lua/init.lua") != 0)
+            Com_Error(ERR_FATAL, "error running init.lua: %s", lua_tostring(L, -1));
 
+        // Run the actual script supplied by the user
         if(luaL_dostring(L, f.c) != 0)
             Com_Error(ERR_FATAL, "error running %s: %s", scriptName, lua_tostring(L, -1));
 
