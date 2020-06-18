@@ -33,10 +33,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #include "../client/keys.h"
-#include "../lua/lua_common.h"
-#include "../lua-src/lauxlib.h"
-#include "../lua-src/lua.h"
-#include "../lua-src/lualib.h"
 
 const int demo_protocols[] = { 66, 67, PROTOCOL_VERSION, NEW_PROTOCOL_VERSION, 0 };
 
@@ -3724,9 +3720,6 @@ void Com_Init( char *commandLine ) {
 	// make sure single player is off by default
 	Cvar_Set( "ui_singlePlayerActive", "0" );
 #endif
-
-	L_Init();
-	
 
 	com_fullyInitialized = qtrue;
 

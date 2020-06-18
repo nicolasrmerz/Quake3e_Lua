@@ -295,6 +295,9 @@ static void SV_Startup( void ) {
 #ifdef USE_IPV6
 	NET_JoinMulticast6();
 #endif
+
+    // Initialize the lua engine - for now, only starts up when server is spawned
+	L_Init();
 }
 
 

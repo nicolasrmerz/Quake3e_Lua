@@ -6,4 +6,8 @@
 
 int qlua_exec_cmd(lua_State *L);
 
+int qlua_get_sys_time(lua_State *L);
+
+int qlua_print(lua_State *L);
+
 int qlua_open_cmd(lua_State *L);
