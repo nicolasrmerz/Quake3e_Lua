@@ -14,6 +14,9 @@ int qlua_read_fs(lua_State *L) {
 
     int len = FS_ReadFile( filename, &f.v );
 
+    if(len < 0)
+	    Com_Error(ERR_FATAL, "qlua_read_fs: attempt to read file that doesn't exist");
+
     lua_pushlstring(L, f.c, (size_t)len);
 
     return 1;

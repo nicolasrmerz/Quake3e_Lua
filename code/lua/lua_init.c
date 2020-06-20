@@ -31,17 +31,19 @@ void L_Init() {
 		L = luaL_newstate();
 		luaL_openlibs(L);
         qlua_openlibs(L);
-        
+
         // Run the lua initialization script
         // luaL_dofile for init.lua - find out how to allow this in C but restrict it in the lua scripts
-        if(luaL_dofile(L, "lua/init.lua") != 0)
+	if(qlua_loadfile(L, "init.lua") != LUA_OK)
+            Com_Error(ERR_FATAL, "error loading init.lua: %s", lua_tostring(L, -1));
+        if(lua_pcall(L, 0, LUA_MULTRET, 0) != LUA_OK)
             Com_Error(ERR_FATAL, "error running init.lua: %s", lua_tostring(L, -1));
 
         // Run the actual script supplied by the user
-        if(luaL_dostring(L, f.c) != 0)
+        if(luaL_dostring(L, f.c) != LUA_OK)
             Com_Error(ERR_FATAL, "error running %s: %s", scriptName, lua_tostring(L, -1));
 
-		Com_Printf( "L PTR VAL: %p\n", (void *) L);
+	Com_Printf( "L PTR VAL: %p\n", (void *) L);
     }
 }
 /*
@@ -70,8 +72,10 @@ int qlua_loadfile(lua_State *L, const char *filename) {
 
     int len = FS_ReadFile( filename, &f.v );
 
-    if(!len)
-        return 0;
+    if(!len) {
+	    lua_pushstring(L, "Loaded file has length of 0");
+        return 1;
+	}
 
     // Will be the different possible Lua error codes
     int res = luaL_loadstring(L, f.c);
